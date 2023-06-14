@@ -17,17 +17,30 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    env:
+      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
+      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: OctopusDeploy/deploy-release-tenanted-action@v3
+        id: "deploy-release-to-alpha"
+        with:
+          project: "Point of Sale - Server"
+          release_number: ${{ github.event.inputs.release }}
+          environments: "Production"
+          tenant_tags: "Release Ring/Alpha"
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+  wait-for-alpha:
+    needs: [ deploy-to-alpha ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        value: ${{ fromJson(steps.deploy-release.outputs.server_tasks) }}
+  
+    steps:
+      - uses: OctopusDeploy/await-task-action@v3
+        id: "wait-for-deploy"
+        with:
+          server_task_id: ${{ matrix.value }}
