@@ -69,6 +69,7 @@ jobs:
 
   deploy-to-beta:
     # The type of runner that the job will run on
+    needs: [approve-alpha-deployment]
     runs-on: ubuntu-latest
     name: "🐙 Deploy release ${{ github.event.inputs.release }} to Beta stores"
     outputs:
@@ -123,6 +124,7 @@ jobs:
         run: echo "✅ Approval gathered"
 
   deploy-to-stable:
+    needs: [approve-beta-deployment]
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     name: "🐙 Deploy release ${{ github.event.inputs.release }} to Stable stores"
