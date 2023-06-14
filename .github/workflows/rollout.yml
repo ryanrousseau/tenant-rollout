@@ -28,6 +28,7 @@ jobs:
     steps:
       - uses: OctopusDeploy/deploy-release-tenanted-action@v3
         id: "deploy-release-to-alpha"
+        name: "🐙 Deploy release ${{ github.event.inputs.release }} to Alpha stores"
         with:
           project: "Point of Sale Server"
           release_number: ${{ github.event.inputs.release }}
@@ -50,6 +51,7 @@ jobs:
   
     steps:
       - uses: OctopusDeploy/await-task-action@v3
-        id: "wait-for-deploy"
+        id: "wait-for-deploy-alpha"
+        name: "🐙 wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
         with:
           server_task_id: ${{ matrix.value.serverTaskId }}
