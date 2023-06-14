@@ -33,7 +33,7 @@ jobs:
           release_number: ${{ github.event.inputs.release }}
           environment: "Production"
           tenant_tags: "Release Ring/Alpha"
-      - id: "print tasks"
+      - id: "print-tasks"
         run: echo "${{ steps.deploy-release-to-alpha.outputs.server_tasks }}"
 
   wait-for-alpha:
