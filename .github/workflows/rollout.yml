@@ -16,6 +16,7 @@ jobs:
   deploy-to-alpha:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    name: "🐙 Deploy release ${{ github.event.inputs.release }} to Alpha stores"
     outputs:
       server_tasks: ${{ steps.deploy-release-to-alpha.outputs.server_tasks }}
 
@@ -40,6 +41,7 @@ jobs:
   wait-for-alpha:
     needs: [ deploy-to-alpha ]
     runs-on: ubuntu-latest
+    name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to Alpha Stores to complete"
     strategy:
       matrix:
         value: ${{ fromJson(needs.deploy-to-alpha.outputs.server_tasks) }}
@@ -52,6 +54,6 @@ jobs:
     steps:
       - uses: OctopusDeploy/await-task-action@v3
         id: "wait-for-deploy-alpha"
-        name: "🐙 wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
+        name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
         with:
           server_task_id: ${{ matrix.value.serverTaskId }}
