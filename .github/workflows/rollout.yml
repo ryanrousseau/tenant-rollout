@@ -16,6 +16,8 @@ jobs:
   deploy-to-alpha:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    outputs:
+      server_tasks: ${{ steps.deploy-release.outputs.server_tasks }}
 
     env:
       OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
@@ -37,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        value: ${{ fromJson(steps.deploy-release.outputs.server_tasks) }}
+        value: ${{ fromJson(needs.deploy-to-alpha.outputs.server_tasks) }}
   
     steps:
       - uses: OctopusDeploy/await-task-action@v3
