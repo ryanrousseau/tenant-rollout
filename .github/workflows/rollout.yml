@@ -43,6 +43,11 @@ jobs:
       matrix:
         value: ${{ fromJson(needs.deploy-to-alpha.outputs.server_tasks) }}
   
+    env:
+      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
+      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
+  
     steps:
       - uses: OctopusDeploy/await-task-action@v3
         id: "wait-for-deploy"
