@@ -12,7 +12,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   deploy-to-alpha:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -54,6 +53,96 @@ jobs:
     steps:
       - uses: OctopusDeploy/await-task-action@v3
         id: "wait-for-deploy-alpha"
+        name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
+        with:
+          server_task_id: ${{ matrix.value.serverTaskId }}
+
+  deploy-to-beta:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    name: "🐙 Deploy release ${{ github.event.inputs.release }} to Beta stores"
+    outputs:
+      server_tasks: ${{ steps.deploy-release-to-beta.outputs.server_tasks }}
+
+    env:
+      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
+      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: OctopusDeploy/deploy-release-tenanted-action@v3
+        id: "deploy-release-to-beta"
+        name: "🐙 Deploy release ${{ github.event.inputs.release }} to Beta stores"
+        with:
+          project: "Point of Sale Server"
+          release_number: ${{ github.event.inputs.release }}
+          environment: "Production"
+          tenant_tags: "Release Ring/Beta"
+      - id: "print-tasks"
+        run: echo "${{ steps.deploy-release-to-beta.outputs.server_tasks }}"
+
+  wait-for-beta:
+    needs: [ deploy-to-beta ]
+    runs-on: ubuntu-latest
+    name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to Beta stores to complete"
+    strategy:
+      matrix:
+        value: ${{ fromJson(needs.deploy-to-beta.outputs.server_tasks) }}
+  
+    env:
+      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
+      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
+  
+    steps:
+      - uses: OctopusDeploy/await-task-action@v3
+        id: "wait-for-deploy-beta"
+        name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
+        with:
+          server_task_id: ${{ matrix.value.serverTaskId }}
+
+  deploy-to-stable:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    name: "🐙 Deploy release ${{ github.event.inputs.release }} to Stable stores"
+    outputs:
+      server_tasks: ${{ steps.deploy-release-to-stable.outputs.server_tasks }}
+
+    env:
+      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
+      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: OctopusDeploy/deploy-release-tenanted-action@v3
+        id: "deploy-release-to-stable"
+        name: "🐙 Deploy release ${{ github.event.inputs.release }} to Stable stores"
+        with:
+          project: "Point of Sale Server"
+          release_number: ${{ github.event.inputs.release }}
+          environment: "Production"
+          tenant_tags: "Release Ring/Stable"
+      - id: "print-tasks"
+        run: echo "${{ steps.deploy-release-to-stable.outputs.server_tasks }}"
+
+  wait-for-stable:
+    needs: [ deploy-to-stable ]
+    runs-on: ubuntu-latest
+    name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to Stable stores to complete"
+    strategy:
+      matrix:
+        value: ${{ fromJson(needs.deploy-to-stable.outputs.server_tasks) }}
+  
+    env:
+      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
+      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
+  
+    steps:
+      - uses: OctopusDeploy/await-task-action@v3
+        id: "wait-for-deploy-stable"
         name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
         with:
           server_task_id: ${{ matrix.value.serverTaskId }}
