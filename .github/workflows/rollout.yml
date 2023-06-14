@@ -31,7 +31,7 @@ jobs:
         with:
           project: "Point of Sale - Server"
           release_number: ${{ github.event.inputs.release }}
-          environments: "Production"
+          environment: "Production"
           tenant_tags: "Release Ring/Alpha"
 
   wait-for-alpha:
