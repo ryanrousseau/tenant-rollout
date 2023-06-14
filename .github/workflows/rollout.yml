@@ -29,7 +29,7 @@ jobs:
       - uses: OctopusDeploy/deploy-release-tenanted-action@v3
         id: "deploy-release-to-alpha"
         with:
-          project: "Point of Sale - Server"
+          project: "Point of Sale Server"
           release_number: ${{ github.event.inputs.release }}
           environment: "Production"
           tenant_tags: "Release Ring/Alpha"
