@@ -47,4 +47,4 @@ jobs:
       - uses: OctopusDeploy/await-task-action@v3
         id: "wait-for-deploy"
         with:
-          server_task_id: ${{ matrix.value }}
+          server_task_id: ${{ matrix.value.serverTaskId }}
