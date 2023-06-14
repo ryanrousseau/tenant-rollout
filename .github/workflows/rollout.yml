@@ -17,7 +17,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     outputs:
-      server_tasks: ${{ steps.deploy-release.outputs.server_tasks }}
+      server_tasks: ${{ steps.deploy-release-to-alpha.outputs.server_tasks }}
 
     env:
       OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
