@@ -14,6 +14,7 @@ env:
   OCTOPUS_URL: https://demo.octopus.app
   OCTOPUS_SERVICE_ACCOUNT: 4d50c8ac-1515-4351-96a7-4a82d55d55ff
   OCTOPUS_SPACE: "Deep Ellum Tech"
+  OCTOPUS_PROJECT: "ACH Router"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -35,7 +36,7 @@ jobs:
         id: "deploy-release-to-alpha"
         name: "🐙 Deploy release ${{ github.event.inputs.release }} to Alpha stores"
         with:
-          project: "Point of Sale Server"
+          project: ${{ env.OCTOPUS_PROJECT }}
           release_number: ${{ github.event.inputs.release }}
           environment: "Production"
           tenant_tags: "Release Ring/Alpha"
@@ -91,7 +92,7 @@ jobs:
         id: "deploy-release-to-beta"
         name: "🐙 Deploy release ${{ github.event.inputs.release }} to Beta stores"
         with:
-          project: "Point of Sale Server"
+          project: ${{ env.OCTOPUS_PROJECT }}
           release_number: ${{ github.event.inputs.release }}
           environment: "Production"
           tenant_tags: "Release Ring/Beta"
@@ -147,7 +148,7 @@ jobs:
         id: "deploy-release-to-stable"
         name: "🐙 Deploy release ${{ github.event.inputs.release }} to Stable stores"
         with:
-          project: "Point of Sale Server"
+          project: ${{ env.OCTOPUS_PROJECT }}
           release_number: ${{ github.event.inputs.release }}
           environment: "Production"
           tenant_tags: "Release Ring/Stable"
