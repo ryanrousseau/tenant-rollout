@@ -193,7 +193,7 @@ jobs:
           tenant_tags: "Release Ring/Alpha"
 
   wait-for-production-alpha:
-    needs: [ deploy-to-test-alpha ]
+    needs: [ deploy-to-production-alpha ]
     runs-on: ubuntu-latest
     name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to  Production - Alpha regions to complete"
     strategy:
