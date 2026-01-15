@@ -10,6 +10,11 @@ on:
         description: "Octopus Release Number"
         required: true
 
+env:
+  OCTOPUS_URL: https://demo.octopus.app
+  OCTOPUS_SERVICE_ACCOUNT: 4d50c8ac-1515-4351-96a7-4a82d55d55ff
+  OCTOPUS_SPACE: "Deep Ellum Tech"
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   deploy-to-alpha:
@@ -19,13 +24,13 @@ jobs:
     outputs:
       server_tasks: ${{ steps.deploy-release-to-alpha.outputs.server_tasks }}
 
-    env:
-      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
-      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: 🐙 Login to Octopus Deploy
+        uses: OctopusDeploy/login@v1
+        with:
+          server: ${{ env.OCTOPUS_URL }}
+          service_account_id: ${{ env.OCTOPUS_SERVICE_ACCOUNT }}
       - uses: OctopusDeploy/deploy-release-tenanted-action@v3
         id: "deploy-release-to-alpha"
         name: "🐙 Deploy release ${{ github.event.inputs.release }} to Alpha stores"
@@ -45,12 +50,12 @@ jobs:
       matrix:
         value: ${{ fromJson(needs.deploy-to-alpha.outputs.server_tasks) }}
   
-    env:
-      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
-      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
-  
     steps:
+      - name: 🐙 Login to Octopus Deploy
+        uses: OctopusDeploy/login@v1
+        with:
+          server: ${{ env.OCTOPUS_URL }}
+          service_account_id: ${{ env.OCTOPUS_SERVICE_ACCOUNT }}
       - uses: OctopusDeploy/await-task-action@v3
         id: "wait-for-deploy-alpha"
         name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
@@ -75,13 +80,13 @@ jobs:
     outputs:
       server_tasks: ${{ steps.deploy-release-to-beta.outputs.server_tasks }}
 
-    env:
-      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
-      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: 🐙 Login to Octopus Deploy
+        uses: OctopusDeploy/login@v1
+        with:
+          server: ${{ env.OCTOPUS_URL }}
+          service_account_id: ${{ env.OCTOPUS_SERVICE_ACCOUNT }}
       - uses: OctopusDeploy/deploy-release-tenanted-action@v3
         id: "deploy-release-to-beta"
         name: "🐙 Deploy release ${{ github.event.inputs.release }} to Beta stores"
@@ -101,12 +106,12 @@ jobs:
       matrix:
         value: ${{ fromJson(needs.deploy-to-beta.outputs.server_tasks) }}
   
-    env:
-      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
-      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
-  
     steps:
+      - name: 🐙 Login to Octopus Deploy
+        uses: OctopusDeploy/login@v1
+        with:
+          server: ${{ env.OCTOPUS_URL }}
+          service_account_id: ${{ env.OCTOPUS_SERVICE_ACCOUNT }}
       - uses: OctopusDeploy/await-task-action@v3
         id: "wait-for-deploy-beta"
         name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
@@ -131,13 +136,13 @@ jobs:
     outputs:
       server_tasks: ${{ steps.deploy-release-to-stable.outputs.server_tasks }}
 
-    env:
-      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
-      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: 🐙 Login to Octopus Deploy
+        uses: OctopusDeploy/login@v1
+        with:
+          server: ${{ env.OCTOPUS_URL }}
+          service_account_id: ${{ env.OCTOPUS_SERVICE_ACCOUNT }}
       - uses: OctopusDeploy/deploy-release-tenanted-action@v3
         id: "deploy-release-to-stable"
         name: "🐙 Deploy release ${{ github.event.inputs.release }} to Stable stores"
@@ -157,12 +162,12 @@ jobs:
       matrix:
         value: ${{ fromJson(needs.deploy-to-stable.outputs.server_tasks) }}
   
-    env:
-      OCTOPUS_URL: ${{ vars.OCTOPUS_SERVER_URL }}
-      OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
-      OCTOPUS_SPACE: ${{ vars.OCTOPUS_SPACE_NAME }}
-  
     steps:
+      - name: 🐙 Login to Octopus Deploy
+        uses: OctopusDeploy/login@v1
+        with:
+          server: ${{ env.OCTOPUS_URL }}
+          service_account_id: ${{ env.OCTOPUS_SERVICE_ACCOUNT }}
       - uses: OctopusDeploy/await-task-action@v3
         id: "wait-for-deploy-stable"
         name: "🐙 Wait for deployment of ${{ github.event.inputs.release }} to ${{ matrix.value.tenantName }} to complete"
