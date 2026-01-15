@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-name: Phased rollout to stores
+name: Phased rollout to environments and regions
 
 # Controls when the workflow will run
 on:
@@ -24,6 +24,8 @@ jobs:
     name: "🐙 Deploy release ${{ github.event.inputs.release }} to Alpha stores"
     outputs:
       server_tasks: ${{ steps.deploy-release-to-alpha.outputs.server_tasks }}
+    permissions:
+      id-token: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -50,6 +52,8 @@ jobs:
     strategy:
       matrix:
         value: ${{ fromJson(needs.deploy-to-alpha.outputs.server_tasks) }}
+    permissions:
+      id-token: write
   
     steps:
       - name: 🐙 Login to Octopus Deploy
@@ -80,6 +84,8 @@ jobs:
     name: "🐙 Deploy release ${{ github.event.inputs.release }} to Beta stores"
     outputs:
       server_tasks: ${{ steps.deploy-release-to-beta.outputs.server_tasks }}
+    permissions:
+      id-token: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -106,6 +112,8 @@ jobs:
     strategy:
       matrix:
         value: ${{ fromJson(needs.deploy-to-beta.outputs.server_tasks) }}
+    permissions:
+      id-token: write
   
     steps:
       - name: 🐙 Login to Octopus Deploy
@@ -136,6 +144,8 @@ jobs:
     name: "🐙 Deploy release ${{ github.event.inputs.release }} to Stable stores"
     outputs:
       server_tasks: ${{ steps.deploy-release-to-stable.outputs.server_tasks }}
+    permissions:
+      id-token: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -162,6 +172,8 @@ jobs:
     strategy:
       matrix:
         value: ${{ fromJson(needs.deploy-to-stable.outputs.server_tasks) }}
+    permissions:
+      id-token: write
   
     steps:
       - name: 🐙 Login to Octopus Deploy
